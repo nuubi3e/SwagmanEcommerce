@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .nav_item {
+    &:not(:last-child) {
+      @apply border-r-2 border-[#ccc];
+    }
+  }
+}
