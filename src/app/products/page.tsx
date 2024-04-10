@@ -1,6 +1,7 @@
 import { AddToCartButton } from '@/components/Buttons';
 import ProductBox from '@/components/ProductBox';
 import { getProducts } from '@/lib/server/get-data';
+import { Metadata } from 'next';
 import React from 'react';
 
 interface ProductsPageProps {
@@ -9,8 +10,18 @@ interface ProductsPageProps {
   };
 }
 
+export async function generateMetadata({ searchParams }: ProductsPageProps) {
+  return {
+    title: `Swagman | ${searchParams?.category || 'All'} Products`,
+    description: `Swagman ${
+      searchParams?.category || 'All'
+    } Products are very premium`,
+  } as Metadata;
+}
+
 const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
   console.log(searchParams);
+
   const productsData = await getProducts(searchParams?.category || '');
 
   const products = productsData.data?.products || [];
