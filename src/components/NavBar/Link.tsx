@@ -19,7 +19,7 @@ const NavLink = ({ href, children }: NavLinkProps) => {
     `${pathname}${category ? `?category=${category}` : ''}` === href;
   return (
     <Link
-      className={`border-b-2 pb-1 transition-all hover:border-black ${
+      className={`border-b-2 pb-1 transition-all hover:border-black outline-none ${
         isActive ? 'border-black' : 'border-transparent'
       }`}
       href={href}>

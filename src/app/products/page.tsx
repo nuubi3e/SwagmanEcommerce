@@ -1,3 +1,6 @@
+import { AddToCartButton } from '@/components/Buttons';
+import ProductBox from '@/components/ProductBox';
+import { getProducts } from '@/lib/server/get-data';
 import React from 'react';
 
 interface ProductsPageProps {
@@ -6,7 +9,12 @@ interface ProductsPageProps {
   };
 }
 
-const ProductsPage = ({ searchParams }: ProductsPageProps) => {
+const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
+  console.log(searchParams);
+  const productsData = await getProducts(searchParams?.category || '');
+
+  const products = productsData.data?.products || [];
+
   return (
     <section className='flex flex-col gap-10'>
       <h1 className='text-center uppercase font-medium text-3xl'>
@@ -16,12 +24,16 @@ const ProductsPage = ({ searchParams }: ProductsPageProps) => {
         <p>Sort By:</p>{' '}
         <select id='' className='w-max border py-2 px-4 outline-none'></select>
       </div>
-      <ul className='grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5 max-[450px]:gap-3 max-xs:gap-5'>
-        <li className='aspect-video border border-off-white-dark'></li>
-        <li className='aspect-video border border-off-white-dark'></li>
-        <li className='aspect-video border border-off-white-dark'></li>
-        <li className='aspect-video border border-off-white-dark'></li>
-        <li className='aspect-video border border-off-white-dark'></li>
+      <ul className='grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5 max-[550px]:gap-3 text-charcoal-grey'>
+        {products.map((prd) => (
+          <ProductBox
+            _id={prd._id.toString()}
+            name={prd.name}
+            price={prd.price}
+            rating={prd.rating}
+            key={prd._id.toString()}
+          />
+        ))}
       </ul>
     </section>
   );

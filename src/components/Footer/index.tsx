@@ -14,7 +14,7 @@ export const Footer: FC = () => {
         </div>
 
         <div className='w-full max-[1310px]:px-10 max-md:px-6'>
-          <p className='w-[1350px] text-justify flex flex-col gap-3 max-[1360px]:w-full mx-auto'>
+          <p className='w-primary text-justify flex flex-col gap-3 max-[1360px]:w-full mx-auto'>
             Welcome to Swagman, a premium men's grooming and clothing brand
             dedicated to helping men look and feel their best. At Swagman, we
             understand that men today are more conscious about their appearance

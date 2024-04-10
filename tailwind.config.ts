@@ -20,7 +20,10 @@ const config: Config = {
         primary: 'var(--font-pr)',
       },
       screens: {
-        xs: '350px',
+        xs: '450px',
+      },
+      width: {
+        primary: '1350px',
       },
     },
   },
