@@ -14,7 +14,6 @@ const NavLink = ({ href, children }: NavLinkProps) => {
   const category = url.get('category');
   const pathname = usePathname();
 
-  console.log(pathname, searchParams);
   const isActive =
     `${pathname}${category ? `?category=${category}` : ''}` === href;
   return (
