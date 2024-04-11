@@ -10,7 +10,9 @@ const NavBar = async () => {
     <li
       className='nav_item font-medium uppercase px-10 max-[1410px]:px-7 max-[1200px]:px-4 '
       key={cat._id.toString()}>
-      <NavLink href={`/products?category=${cat.name}`}>{cat.name}</NavLink>
+      <Suspense>
+        <NavLink href={`/products?category=${cat.name}`}>{cat.name}</NavLink>
+      </Suspense>
     </li>
   ));
 
