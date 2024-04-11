@@ -1,6 +1,6 @@
-import { AddToCartButton } from '@/components/Buttons';
 import ProductBox from '@/components/ProductBox';
 import { getProducts } from '@/lib/server/get-data';
+import { capitalize } from '@/lib/utils/globals.utils';
 import { Metadata } from 'next';
 import React from 'react';
 
@@ -12,7 +12,9 @@ interface ProductsPageProps {
 
 export async function generateMetadata({ searchParams }: ProductsPageProps) {
   return {
-    title: `Swagman | ${searchParams?.category || 'All'} Products`,
+    title: `Swagman | ${
+      capitalize(searchParams?.category || '') || 'All'
+    } Products`,
     description: `Swagman ${
       searchParams?.category || 'All'
     } Products are very premium`,
