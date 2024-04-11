@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import NavLink from './Link';
 import { getCategories } from '@/lib/server/get-data';
 
@@ -18,7 +18,9 @@ const NavBar = async () => {
     <nav className='bg-off-white py-4 hidden lg:flex justify-center'>
       <ul className='flex'>
         <li className='nav_item font-medium uppercase px-10 max-[1410px]:px-7 max-[1200px]:px-4 '>
-          <NavLink href='/products'>All Products</NavLink>
+          <Suspense>
+            <NavLink href='/products'>All Products</NavLink>
+          </Suspense>
         </li>
         {categoryJSX}
       </ul>
