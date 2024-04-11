@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Raleway } from 'next/font/google';
 import '../sass/index.scss';
 import Providers from '@/providers';
+import CartContianer from '@/components/Cart';
 
 const raleway = Raleway({
   subsets: ['latin'],
@@ -22,7 +23,10 @@ export default function RootLayout({
   return (
     <html lang='en' className={raleway.variable}>
       <body className='font-primary relative'>
-        <Providers>{children}</Providers>
+        <Providers>
+          <CartContianer />
+          {children}
+        </Providers>
       </body>
     </html>
   );

@@ -3,6 +3,7 @@ import React from 'react';
 import { AddToCartButton } from '../Buttons';
 import { Log } from '@/lib/logs';
 import { ProductBrief } from '@/lib/types/client.types';
+import Image from 'next/image';
 
 interface ProductBoxProps extends ProductBrief {}
 
@@ -14,7 +15,15 @@ const ProductBox = (prd: ProductBoxProps) => {
       className='border border-off-white-dark flex flex-col items-center shadow select-none'
       key={prd._id.toString()}>
       {/* image box */}
-      <figure className='w-full aspect-[1/1.1] bg-charcoal-grey bg-opacity-10'></figure>
+      <figure className='w-full aspect-[1/1] max-xs:aspect-[1/1.2]'>
+        <Image
+          src={'/images/tshirt-black.png'}
+          alt='product-cover'
+          width={400}
+          height={400}
+          className='w-full h-full object-contain'
+        />
+      </figure>
 
       {/* info box */}
       <div className='p-4 flex flex-col items-center text-center w-full flex-1'>

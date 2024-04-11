@@ -1,6 +1,6 @@
 'use client';
 import { ProductBrief } from '@/lib/types/client.types';
-import React, { createContext, ReactNode, useReducer } from 'react';
+import React, { createContext, ReactNode, useReducer, useState } from 'react';
 
 type ProductState = ProductBrief & { quantity: number };
 
@@ -10,6 +10,10 @@ type CartContextT = {
   removeFromCart: (productId: string) => void;
   totalQuantity: number;
   totalPrice: number;
+  cartIsVisible: boolean;
+  showCart: () => void;
+  hideCart: () => void;
+  deleteItemFromCart: (productId: string) => void;
 };
 
 type CartState = {
@@ -20,7 +24,10 @@ type CartState = {
 
 type CartReducerFn = (
   state: CartState,
-  action: { payload: ProductBrief | string; type: 'add' | 'remove' }
+  action: {
+    payload: ProductBrief | string;
+    type: 'add' | 'remove' | 'deleteItem';
+  }
 ) => CartState;
 
 export const CartContext = createContext<CartContextT>({
@@ -29,6 +36,10 @@ export const CartContext = createContext<CartContextT>({
   removeFromCart: (_id) => {},
   totalQuantity: 0,
   totalPrice: 0,
+  cartIsVisible: false,
+  hideCart: () => {},
+  showCart: () => {},
+  deleteItemFromCart: (prdId) => {},
 });
 
 const init: CartState = {
@@ -73,6 +84,17 @@ const cartReducer: CartReducerFn = (state, action) => {
     }
   }
 
+  if (type === 'deleteItem') {
+    const prdIndex = products.findIndex((p) => p._id === (payload as string));
+    if (prdIndex > -1) {
+      const product = products[prdIndex];
+      totalQuantity = totalQuantity - product.quantity; // decreasing quantity by product quantity
+      totalPrice = totalPrice - product.price * product.quantity; // decreasing price by product price * its quantity
+
+      products.splice(prdIndex, 1); // removing product
+    }
+  }
+
   return {
     ...state.products,
     products,
@@ -83,6 +105,7 @@ const cartReducer: CartReducerFn = (state, action) => {
 
 const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, cartDispatch] = useReducer(cartReducer, init);
+  const [cartIsVisible, setCartIsVisible] = useState(false);
 
   const addToCart = (product: ProductBrief) => {
     cartDispatch({ payload: product, type: 'add' });
@@ -92,8 +115,24 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
     cartDispatch({ payload: productId, type: 'remove' });
   };
 
+  const deleteItemFromCart = (productId: string) => {
+    cartDispatch({ payload: productId, type: 'deleteItem' });
+  };
+
+  const showCart = () => setCartIsVisible(true);
+  const hideCart = () => setCartIsVisible(false);
+
   return (
-    <CartContext.Provider value={{ ...cart, addToCart, removeFromCart }}>
+    <CartContext.Provider
+      value={{
+        ...cart,
+        addToCart,
+        removeFromCart,
+        cartIsVisible,
+        showCart,
+        hideCart,
+        deleteItemFromCart,
+      }}>
       {children}
     </CartContext.Provider>
   );

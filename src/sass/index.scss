@@ -8,4 +8,10 @@
       @apply border-r-2 border-[#ccc];
     }
   }
+
+  .hide_scrollbar {
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }
