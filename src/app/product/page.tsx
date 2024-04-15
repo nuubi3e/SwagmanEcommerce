@@ -33,6 +33,9 @@ export async function generateMetadata({
     return {
       title: `${searchParams?.name}`,
       description: prd.description.split('\n')[0],
+      openGraph: {
+        images: '/images/charcoal-body-wash.jpg',
+      },
     } as Metadata;
   } catch (err) {
     // return product not found metadata
