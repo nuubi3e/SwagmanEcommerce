@@ -1,9 +1,8 @@
 'use client';
-import { Log } from '@/lib/logs';
 import { CartContext } from '@/providers/CartProvider';
 import { AnimatePresence, motion as m } from 'framer-motion';
 import Image from 'next/image';
-import React, { Fragment, useContext, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { FaCartShopping } from 'react-icons/fa6';
 import { GoPlus } from 'react-icons/go';
 import { IoClose } from 'react-icons/io5';
@@ -71,12 +70,6 @@ const CartItems = () => {
 const CartSummary = () => {
   const cartState = useContext(CartContext);
 
-  const cartSummary = {
-    Taxes: '₹ 0',
-    'Shipping Cost': 'Calculated at next step',
-    'Total Price': '₹ ' + cartState.totalPrice,
-  };
-
   return (
     <footer className='flex flex-col gap-3'>
       <p className='border-b flex justify-between items-end pb-1 text-sm'>
@@ -102,10 +95,10 @@ const CartSummary = () => {
 };
 
 const Cart = () => {
-  document.body.style.overflow = 'hidden';
   const cartState = useContext(CartContext);
 
   useEffect(() => {
+    // stop body scroll when cart opens
     document.body.style.overflow = 'hidden';
     const hideCartHandler = (e: MouseEvent) => {
       if (!(e.target as HTMLElement).closest('#cart')) cartState.hideCart();
@@ -114,6 +107,7 @@ const Cart = () => {
 
     return () => {
       document.removeEventListener('click', hideCartHandler);
+      // stops body scroll when cart closes
       document.body.style.overflow = 'scroll';
     };
   }, [cartState]);
@@ -163,8 +157,6 @@ const Cart = () => {
 
 const CartContianer = () => {
   const cartState = useContext(CartContext);
-
-  Log.log(cartState);
 
   return (
     <AnimatePresence mode='wait'>

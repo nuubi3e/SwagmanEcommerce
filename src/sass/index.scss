@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer components {
+  html {
+    scroll-behavior: smooth;
+  }
+
   .nav_item {
     &:not(:last-child) {
       @apply border-r-2 border-[#ccc];
@@ -14,4 +18,23 @@
       display: none;
     }
   }
+
+  input[name='sizes']:checked + label {
+    @apply bg-charcoal-grey text-off-white;
+  }
+
+  .des-cus-scroll {
+    &::-webkit-scrollbar {
+      width: 5px;
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      @apply rounded-full bg-charcoal-grey bg-opacity-50;
+    }
+  }
+}
+
+.hide-show {
+  transition: height 200ms ease-in-out;
 }

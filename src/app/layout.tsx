@@ -3,6 +3,15 @@ import { Raleway } from 'next/font/google';
 import '../sass/index.scss';
 import Providers from '@/providers';
 import CartContianer from '@/components/Cart';
+import { Footer } from '@/components/Footer';
+import Header from '@/components/Header';
+import dynamic from 'next/dynamic';
+const ScrollToTop = dynamic(
+  () => import('@/components/ScrollToTop/ScrollToTop.component'),
+  {
+    ssr: false,
+  }
+);
 
 const raleway = Raleway({
   subsets: ['latin'],
@@ -23,9 +32,16 @@ export default function RootLayout({
   return (
     <html lang='en' className={raleway.variable}>
       <body className='font-primary relative'>
+        <ScrollToTop />
         <Providers>
           <CartContianer />
-          {children}
+          <Header />
+          <main className='px-8 max-lg:px-6 max-md:px-5'>
+            <div className='w-primary max-[1430px]:w-full mx-auto pt-10 pb-14'>
+              {children}
+            </div>
+          </main>
+          <Footer />
         </Providers>
       </body>
     </html>

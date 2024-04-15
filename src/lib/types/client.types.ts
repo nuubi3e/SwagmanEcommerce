@@ -1,45 +1,29 @@
-import { FC } from 'react';
-import {
-  ICategorySchema,
-  IProductSchema,
-  IRoleSchema,
-  timeStamps,
-} from './schema.types';
-
-export type CTRole = IRoleSchema & {
-  _id: string;
+export type ProductDetail = {
+  name: string;
+  price: number;
+  sizes: {
+    price: number;
+    size: string;
+    _id: string;
+  }[];
+  rating: number;
+  reviews: Review[];
+  description: string;
+  categoryId: string;
+  images: string[];
+  ingredients: Ingredient[];
+  units: number;
 };
 
-export type CTUser = timeStamps & {
-  _id: string;
+export type Ingredient = { name: string; description: string; _id: string };
+export type Review = {
+  userId: string;
+  review: string;
+  rating: number;
   username: string;
-  fullName: string;
-  roleId: string;
-  displayPic?: string;
-  role?: string;
-};
-
-export type CTCategory = ICategorySchema & {
+  date: string;
   _id: string;
 };
-
-export type CTProduct = IProductSchema & {
-  _id: string;
-};
-
-export type FORMTYPES = 'user' | 'role' | 'category' | 'product';
-
-export type CTEditDeleteBtnCP = FC<{
-  id: string;
-  title: FORMTYPES;
-  curUserId?: string;
-}>;
-
-export type CTAddEditForms = FC<{
-  closeModal: () => void;
-  mode: 'add' | 'edit';
-  id?: string;
-}>;
 
 export type ProductBrief = {
   _id: string;
@@ -47,4 +31,9 @@ export type ProductBrief = {
   price: number;
   image?: string;
   rating: number;
+};
+
+export type Category = {
+  _id: string;
+  name: string;
 };

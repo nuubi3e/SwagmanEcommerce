@@ -1,10 +1,21 @@
 import React, { Suspense } from 'react';
 import NavLink from './Link';
-import { getCategories } from '@/lib/server/get-data';
+import { connectToAPI } from '@/lib/utils/globals.utils';
+import { Log } from '@/lib/logs';
+import { Category } from '@/lib/types/client.types';
 
 const NavBar = async () => {
-  const serverData = await getCategories();
-  const categories = serverData.data?.categories || [];
+  let categories: Category[] = [];
+
+  try {
+    const data = await connectToAPI({ endpoint: 'categories' });
+
+    console.clear();
+    Log.log('IN CAT', data);
+    categories = data?.data?.categories || [];
+  } catch (err) {
+    categories = [];
+  }
 
   const categoryJSX = categories.map((cat) => (
     <li

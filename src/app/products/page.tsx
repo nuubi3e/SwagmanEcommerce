@@ -1,7 +1,7 @@
-import ProductBox from '@/components/ProductBox';
+import ProductBox from '@/components/ProductBox/ProductBox.component';
 import { Log } from '@/lib/logs';
 import { ProductBrief } from '@/lib/types/client.types';
-import { capitalize } from '@/lib/utils/globals.utils';
+import { capitalize, connectToAPI } from '@/lib/utils/globals.utils';
 import { Metadata } from 'next';
 import React from 'react';
 
@@ -26,18 +26,9 @@ const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
   let products: ProductBrief[] = [];
 
   try {
-    const res = await fetch(
-      `${process.env.API_URL}api/products?category=${
-        searchParams?.category || ''
-      }`
-    );
-
-    if (!res.ok) {
-      const text = JSON.parse(await res.text());
-      throw new Error(text.message);
-    }
-
-    const data = await res.json();
+    const data = await connectToAPI({
+      endpoint: `products?category=${searchParams?.category || ''}`,
+    });
 
     products = data?.data?.products || [];
   } catch (err) {

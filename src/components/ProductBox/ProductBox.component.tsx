@@ -4,6 +4,8 @@ import { AddToCartButton } from '../Buttons';
 import { Log } from '@/lib/logs';
 import { ProductBrief } from '@/lib/types/client.types';
 import Image from 'next/image';
+import Link from 'next/link';
+import { GenerateStars } from '@/lib/utils/client.utils';
 
 interface ProductBoxProps extends ProductBrief {}
 
@@ -27,7 +29,13 @@ const ProductBox = (prd: ProductBoxProps) => {
 
       {/* info box */}
       <div className='p-4 flex flex-col items-center text-center w-full flex-1'>
-        <h4 className='text-2xl font-medium'> {prd.name} </h4>
+        <h4 className='text-2xl font-medium'>
+          <Link href={`/product?name=${prd.name}`}> {prd.name}</Link>{' '}
+        </h4>
+
+        <div className='flex items-center gap-1 my-1'>
+          {GenerateStars(prd.rating)}
+        </div>
         <p className=''>({prd.rating}) Rating</p>
         <p className='mb-4 font-semibold text-xl'>₹ {prd.price}</p>
         <div className='self-stretch mt-auto'>

@@ -1,11 +1,7 @@
-import { Footer } from '@/components/Footer';
-import Header from '@/components/Header';
-
 export default function Home() {
   return (
     <>
-      <Header />
-      <Footer />
+      <h1 className='text-3xl text-center'>Home Page</h1>
     </>
   );
 }
