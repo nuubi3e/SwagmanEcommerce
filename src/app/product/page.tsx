@@ -20,8 +20,6 @@ interface ProductDetailsPageProps {
 export async function generateMetadata({
   searchParams,
 }: ProductDetailsPageProps) {
-  if (!searchParams?.name) return {};
-
   try {
     const data = await connectToAPI({
       endpoint: `product?name=${searchParams.name}`,
@@ -68,10 +66,8 @@ const sizes = [
 const ProductDetailsPage = async ({
   searchParams,
 }: ProductDetailsPageProps) => {
-  if (!searchParams?.name) return redirect('/products'); // if there is no search params then redirect to products page
-
   const data = await connectToAPI({
-    endpoint: `product?name=${searchParams.name}`,
+    endpoint: `product?name=${searchParams?.name || ''}`,
   });
 
   const prd = data.data.product as ProductDetail;
@@ -98,9 +94,9 @@ const ProductDetailsPage = async ({
             <p>
               <strong>Sizes:</strong>
             </p>
-            <section className='flex items-center gap-2'>
+            <section className='flex items-center gap-2 flex-wrap'>
               {sizes.map((size) => (
-                <div key={size.name}>
+                <div key={size.name} className='w-max'>
                   <input type='radio' name='sizes' id={size.name} hidden />
                   <label
                     htmlFor={size.name}
