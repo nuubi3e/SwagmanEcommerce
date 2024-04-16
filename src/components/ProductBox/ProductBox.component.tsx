@@ -30,7 +30,7 @@ const ProductBox = (prd: ProductBoxProps) => {
       {/* info box */}
       <div className='p-4 flex flex-col items-center text-center w-full flex-1'>
         <h4 className='text-2xl font-medium'>
-          <Link href={`/product?name=${prd.name}`}> {prd.name}</Link>{' '}
+          <Link href={`/product/${prd.name}`}> {prd.name}</Link>{' '}
         </h4>
 
         <div className='flex items-center gap-1 my-1'>

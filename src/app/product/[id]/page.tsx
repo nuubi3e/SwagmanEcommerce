@@ -1,92 +1,88 @@
-import ProductDetailImages from '@/components/ProductDetailImages';
-import { Log } from '@/lib/logs';
 import { ProductDetail } from '@/lib/types/client.types';
 import { connectToAPI } from '@/lib/utils/globals.utils';
-import { redirect } from 'next/navigation';
 import React from 'react';
-import ProductDescription from './components/ProductDescription.component';
-import { Metadata } from 'next';
-import NewReviewForm from './components/NewReviewForm.component';
+import Error from './components/Error.component';
+import ProductDetailImages from '@/components/ProductDetailImages';
 import { GenerateStars } from '@/lib/utils/client.utils';
+import ProductDescription from './components/ProductDescription.component';
 import Ingredients from './components/Ingredients.component';
+import NewReviewForm from './components/NewReviewForm.component';
+import { Metadata } from 'next';
 
-interface ProductDetailsPageProps {
-  searchParams: {
-    name?: string;
-  };
+interface Props {
+  params: { id: string };
 }
 
-// generating dynamic meta deta for each product
-export async function generateMetadata({
-  searchParams,
-}: ProductDetailsPageProps) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  let product: ProductDetail | null = null;
   try {
     const data = await connectToAPI({
-      endpoint: `product?name=${searchParams.name}`,
+      endpoint: `product?name=${params.id}`,
     });
 
-    const prd = data.data.product as ProductDetail;
-
-    // return product details in metadata
-    return {
-      title: `${searchParams?.name}`,
-      description: prd.description.split('\n')[0],
-      openGraph: {
-        images: '/images/charcoal-body-wash.jpg',
-      },
-    } as Metadata;
-  } catch (err) {
-    // return product not found metadata
-    return {
-      title: `Swagman | Product not Found`,
-      description: `Sorry Looks like this product no longer exists`,
-    } as Metadata;
+    product = data?.data?.product || null;
+  } catch (err: any) {
+    // setting error message and product to null
+    product = null;
   }
+
+  return {
+    title: product ? product?.name : '404 Product Not Found',
+    description: product
+      ? product.description.split('\n')[0]
+      : "We don't have this product",
+  };
 }
 
 const sizes = [
   {
-    name: '20 ml',
-    price: 99,
+    name: '50ml',
+    id: 1,
   },
   {
-    name: '100 ml',
-    price: 189,
+    name: '100ml',
+    id: 2,
   },
   {
-    name: '200 ml',
-    price: 259,
+    name: '150ml',
+    id: 3,
   },
   {
-    name: '300 ml',
-    price: 450,
+    name: '200ml',
+    id: 4,
   },
 ];
 
-const ProductDetailsPage = async ({
-  searchParams,
-}: ProductDetailsPageProps) => {
-  const data = await connectToAPI({
-    endpoint: `product?name=${searchParams?.name || ''}`,
-  });
+const ProductDetailsPage = async ({ params }: Props) => {
+  let errorMessage = 'Product Not Found';
+  let product: ProductDetail | null = null;
+  try {
+    const data = await connectToAPI({
+      endpoint: `product?name=${params.id}`,
+    });
 
-  const prd = data.data.product as ProductDetail;
+    product = data?.data?.product || null;
+  } catch (err: any) {
+    // setting error message and product to null
+    errorMessage = err.message;
+    product = null;
+  }
 
-  Log.log(prd);
+  if (!product) return <Error message={errorMessage} />;
 
   return (
     <div className='flex flex-col gap-10'>
       <header className='flex max-lg:flex-col gap-20'>
-        {/* prd images */}
+        {/* product images */}
         <ProductDetailImages />
 
         {/* info */}
         <section className='flex flex-col gap-3 text-black'>
-          <h1 className='text-5xl max-xs:text-4xl'>{prd.name}</h1>
+          <h1 className='text-5xl max-xs:text-4xl'>{product.name}</h1>
 
           <div className='flex items-center gap-2 text-2xl text-charcoal-grey'>
-            {GenerateStars(prd.rating)}{' '}
-            <p className='text-lg font-medium'>({prd.rating}) Ratings</p>
+            {GenerateStars(product.rating)}{' '}
+            <p className='text-lg font-medium'>({product.rating}) Ratings</p>
           </div>
 
           {/* sizes */}
@@ -108,13 +104,13 @@ const ProductDetailsPage = async ({
             </section>
           </div>
 
-          <p className='font-semibold text-2xl'>₹ {prd.price}</p>
+          <p className='font-semibold text-2xl'>₹ {product.price}</p>
         </section>
       </header>
 
-      <ProductDescription description={prd.description} />
+      <ProductDescription description={product.description} />
 
-      <Ingredients ingredients={prd.ingredients} />
+      <Ingredients ingredients={product.ingredients} />
 
       {/* User Reviews */}
       <section className=''>
@@ -127,19 +123,19 @@ const ProductDetailsPage = async ({
           <div className='flex flex-col gap-2'>
             <h3 className='text-3xl max-xs:text-2xl'>Overall Rating</h3>
             <div className='flex items-center gap-2 text-3xl text-charcoal-grey mb-2'>
-              {GenerateStars(prd.rating)}
+              {GenerateStars(product.rating)}
             </div>
 
             <NewReviewForm />
           </div>
 
           <ul className='flex flex-col gap-4 flex-1'>
-            {prd.reviews.length === 0 && (
+            {product.reviews.length === 0 && (
               <li className='text-center text-2xl font-medium mt-16'>
                 No Reviews Found!!
               </li>
             )}
-            {prd.reviews.map((review) => (
+            {product.reviews.map((review) => (
               <li
                 className='bg-off-white flex flex-col p-3 gap-2 text-charcoal-grey'
                 key={review._id}>
