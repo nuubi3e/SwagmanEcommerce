@@ -8,6 +8,7 @@ import ProductDescription from './components/ProductDescription.component';
 import Ingredients from './components/Ingredients.component';
 import NewReviewForm from './components/NewReviewForm.component';
 import { Metadata } from 'next';
+import { Log } from '@/lib/logs';
 
 interface Props {
   params: { id: string };
@@ -69,6 +70,8 @@ const ProductDetailsPage = async ({ params }: Props) => {
   }
 
   if (!product) return <Error message={errorMessage} />;
+
+  Log.log(product);
 
   return (
     <div className='flex flex-col gap-10'>

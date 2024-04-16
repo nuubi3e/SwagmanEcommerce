@@ -1,5 +1,5 @@
 'use client';
-import { CartContext } from '@/providers/CartProvider';
+import { CartContext } from '@/providers/Cart/Cart.provider';
 import { AnimatePresence, motion as m } from 'framer-motion';
 import Image from 'next/image';
 import React, { useContext, useEffect } from 'react';
@@ -94,26 +94,23 @@ const CartSummary = () => {
   );
 };
 
-const Cart = () => {
+const CartModal = () => {
   const cartState = useContext(CartContext);
 
   useEffect(() => {
     // stop body scroll when cart opens
     document.body.style.overflow = 'hidden';
-    const hideCartHandler = (e: MouseEvent) => {
-      if (!(e.target as HTMLElement).closest('#cart')) cartState.hideCart();
-    };
-    document.addEventListener('click', hideCartHandler);
-
     return () => {
-      document.removeEventListener('click', hideCartHandler);
       // stops body scroll when cart closes
       document.body.style.overflow = 'scroll';
     };
-  }, [cartState]);
+  }, []);
 
   return (
     <m.div
+      onClick={(e) =>
+        !(e.target as HTMLElement).closest('#cartModal') && cartState.hideCart()
+      }
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -125,7 +122,7 @@ const Cart = () => {
         exit={{ x: '100%' }}
         transition={{ ease: 'easeInOut' }}
         className='w-[460px] ml-auto max-[500px]:w-full h-full bg-white origin-right overflow-hidden relative px-8 py-6 flex flex-col max-[510px]:transition-all max-xs:px-3 max-xs:py-3 bg-opacity-90 backdrop-blur-[10px]'
-        id='cart'>
+        id='cartModal'>
         <header className='flex justify-between items-center'>
           <h2 className='text-2xl font-extrabold'>
             My Cart{' '}
@@ -155,14 +152,14 @@ const Cart = () => {
   );
 };
 
-const CartContianer = () => {
+const Cart = () => {
   const cartState = useContext(CartContext);
 
   return (
     <AnimatePresence mode='wait'>
-      {cartState.cartIsVisible && <Cart />}
+      {cartState.cartIsVisible && <CartModal />}
     </AnimatePresence>
   );
 };
 
-export default CartContianer;
+export default Cart;

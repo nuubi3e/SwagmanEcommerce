@@ -1,6 +1,6 @@
 'use client';
 import { Log } from '@/lib/logs';
-import { CartContext } from '@/providers/CartProvider';
+import { CartContext } from '@/providers/Cart/Cart.provider';
 import { FC, useContext } from 'react';
 import { FaCartShopping } from 'react-icons/fa6';
 import { GoPlus } from 'react-icons/go';

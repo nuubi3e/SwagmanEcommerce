@@ -1,8 +1,10 @@
 'use client';
 import { GenerateStars } from '@/lib/utils/client.utils';
-import React, { useEffect, useRef, useState } from 'react';
+import { AuthContext } from '@/providers/Auth/Auth.provider';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 const NewReviewForm = () => {
+  const authCtx = useContext(AuthContext);
   const [showForm, setShowForm] = useState<boolean | null>(null);
   const formContainer = useRef<HTMLDivElement>(null); // to store ref of form div for animation
   const buttonContainer = useRef<HTMLDivElement>(null); // to store button div for animation
@@ -37,7 +39,12 @@ const NewReviewForm = () => {
         className={`origin-top overflow-hidden hide-show`}>
         <button
           type='button'
-          onClick={() => setShowForm(true)}
+          onClick={() =>
+            // opening review form is user is logged in else opening form modal
+            authCtx.isLoggedIn
+              ? setShowForm(true)
+              : authCtx.setShowAuthForm(true)
+          }
           className={`max-w-full border-2 origin-top min-w-[300px] max-[350px]:min-w-full self-stretch border-charcoal-grey text-charcoal-grey py-3 font-medium border-opacity-70 text-center px-10 text-xl transition-all`}>
           Write a Review
         </button>
