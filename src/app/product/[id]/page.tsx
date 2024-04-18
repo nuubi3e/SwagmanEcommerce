@@ -60,6 +60,7 @@ const ProductDetailsPage = async ({ params }: Props) => {
   try {
     const data = await connectToAPI({
       endpoint: `product?name=${params.id}`,
+      noCache: true,
     });
 
     product = data?.data?.product || null;

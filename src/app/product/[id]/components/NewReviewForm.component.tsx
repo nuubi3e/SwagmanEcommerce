@@ -2,9 +2,20 @@
 import { GenerateStars } from '@/lib/utils/client.utils';
 import { AuthContext } from '@/providers/Auth/Auth.provider';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+interface ReviewFormData {
+  review: string;
+  rating: number;
+}
 
 const NewReviewForm = () => {
   const authCtx = useContext(AuthContext);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ReviewFormData>();
   const [showForm, setShowForm] = useState<boolean | null>(null);
   const formContainer = useRef<HTMLDivElement>(null); // to store ref of form div for animation
   const buttonContainer = useRef<HTMLDivElement>(null); // to store button div for animation
@@ -31,6 +42,11 @@ const NewReviewForm = () => {
       buttonContainer.current.style.height = buttonHeight.current + 'px';
     }
   }
+
+  const newReviewHandler = async (userInp: ReviewFormData) => {
+    try {
+    } catch (err) {}
+  };
 
   return (
     <>
@@ -62,8 +78,10 @@ const NewReviewForm = () => {
             Review:
           </label>
           <textarea
-            name='review'
             id='review'
+            {...register('review', {
+              required: 'Please Provide your valuable feeback',
+            })}
             rows={5}
             placeholder='write a review'
             className={
@@ -74,6 +92,14 @@ const NewReviewForm = () => {
             <label htmlFor='rating' className='font-medium'>
               Rating:
             </label>
+            <input
+              type='number'
+              hidden
+              {...register('rating', {
+                required: 'Please provide some rating',
+                valueAsNumber: true,
+              })}
+            />
             <div className='flex items-center gap-1 text-xl'>
               {GenerateStars(0)}
             </div>

@@ -8,7 +8,7 @@ const NavBar = async () => {
   let categories: Category[] = [];
 
   try {
-    const data = await connectToAPI({ endpoint: 'categories' });
+    const data = await connectToAPI({ endpoint: 'categories', noCache: true });
 
     console.clear();
     Log.log('IN CAT', data);
