@@ -1,4 +1,5 @@
 'use client';
+import { Review } from '@/lib/types/client.types';
 import { GenerateStars } from '@/lib/utils/client.utils';
 import { AuthContext } from '@/providers/Auth/Auth.provider';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -9,7 +10,11 @@ interface ReviewFormData {
   rating: number;
 }
 
-const NewReviewForm = () => {
+interface Props {
+  addNewReview: (review: ReviewFormData) => Promise<void>;
+}
+
+const NewReviewForm = ({ addNewReview }: Props) => {
   const authCtx = useContext(AuthContext);
   const {
     register,
@@ -45,6 +50,7 @@ const NewReviewForm = () => {
 
   const newReviewHandler = async (userInp: ReviewFormData) => {
     try {
+      await addNewReview(userInp);
     } catch (err) {}
   };
 
@@ -68,12 +74,7 @@ const NewReviewForm = () => {
       <div
         ref={formContainer}
         className={`origin-bottom overflow-hidden hide-show`}>
-        <form
-          action='#'
-          onSubmit={(e) => {
-            e.preventDefault();
-            setShowForm(false);
-          }}>
+        <form noValidate onSubmit={handleSubmit(newReviewHandler)}>
           <label htmlFor='review' className='font-medium block'>
             Review:
           </label>
@@ -87,22 +88,37 @@ const NewReviewForm = () => {
             className={
               'border w-full border-opacity-70 border-charcoal-grey resize-none outline-none p-2 des-cus-scroll'
             }></textarea>
+          {errors.review && (
+            <p className='text-red-500 text-sm'>{errors.review.message}</p>
+          )}
 
-          <div className='flex items-center gap-3 mt-1'>
-            <label htmlFor='rating' className='font-medium'>
-              Rating:
-            </label>
-            <input
-              type='number'
-              hidden
-              {...register('rating', {
-                required: 'Please provide some rating',
-                valueAsNumber: true,
-              })}
-            />
-            <div className='flex items-center gap-1 text-xl'>
-              {GenerateStars(0)}
+          <div className='flex flex-col gap-2'>
+            <div className='flex items-center gap-3 mt-1'>
+              <label htmlFor='rating' className='font-medium'>
+                Rating:
+              </label>
+              <input
+                type='number'
+                {...register('rating', {
+                  required: 'Please provide some rating',
+                  valueAsNumber: true,
+                  min: {
+                    value: 1,
+                    message: 'Rating must be at least 1',
+                  },
+                  max: {
+                    value: 5,
+                    message: 'Rating must be at most 5',
+                  },
+                })}
+              />
+              <div className='flex items-center gap-1 text-xl'>
+                {GenerateStars(0)}
+              </div>
             </div>
+            {errors.rating && (
+              <p className='text-red-500 text-sm'>{errors.rating.message}</p>
+            )}
           </div>
           <button
             type='submit'

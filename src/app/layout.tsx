@@ -8,6 +8,7 @@ import dynamic from 'next/dynamic';
 import { AuthProvider } from '@/providers/Auth/Auth.provider';
 import CartProvider from '@/providers/Cart/Cart.provider';
 import Login from '@/components/Login/Login.component';
+import { getSession } from '@/lib/actions/actions';
 const ScrollToTop = dynamic(
   () => import('@/components/ScrollToTop/ScrollToTop.component'),
   {
@@ -26,16 +27,18 @@ export const metadata: Metadata = {
   description: `Welcome to Swagman, a premium men's grooming and clothing brand dedicated to helping men look and feel their best. At Swagman, we understand that men today are more conscious about their appearance than ever before. That's why we provide an extensive range of high-quality grooming and clothing products designed specifically for men.`,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getSession();
+
   return (
     <html lang='en' className={raleway.variable}>
       <body className='font-primary relative'>
         <ScrollToTop />
-        <AuthProvider hasUser={false}>
+        <AuthProvider hasUser={session ? true : false}>
           <CartProvider>
             <Cart />
             <Login />

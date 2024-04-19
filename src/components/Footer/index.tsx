@@ -2,7 +2,7 @@
 import { FC } from 'react';
 import Link from 'next/link';
 import { SwagmanLogo } from '../icons/Logos';
-import NavBar from '../NavBar';
+import NavBar from '../NavBar/NavBar.component';
 
 export const Footer: FC = () => {
   return (

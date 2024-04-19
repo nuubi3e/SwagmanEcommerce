@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import NavLink from './Link';
+import NavLink from './NavLink.component';
 import { connectToAPI } from '@/lib/utils/globals.utils';
 import { Log } from '@/lib/logs';
 import { Category } from '@/lib/types/client.types';

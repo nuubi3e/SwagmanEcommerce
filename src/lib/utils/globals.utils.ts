@@ -1,3 +1,5 @@
+import { Log } from '../logs';
+
 export const capitalize = (str: string) =>
   str
     .trim()
@@ -12,11 +14,18 @@ export const connectToAPI = async ({
   endpoint: string;
   noCache?: boolean;
 }) => {
+  console.clear();
   const url = endpoint.includes('http')
     ? endpoint
-    : `${process.env.API_URL}api/${endpoint}`;
+    : `${
+        process.env.API_URL || process.env.NEXT_PUBLIC_API_URL
+      }api/${endpoint}`;
 
-  console.log(url);
+  Log.log('URL: ', url);
+  Log.log('INFO: ', {
+    method: 'GET',
+    cache: noCache ? 'no-cache' : 'force-cache',
+  });
 
   const res = await fetch(url, {
     method: 'GET',
@@ -30,6 +39,8 @@ export const connectToAPI = async ({
   }
 
   const data = await res.json();
+
+  Log.log('RES: ', data);
 
   return data;
 };

@@ -1,10 +1,14 @@
 'use client';
+import { logOutAction } from '@/lib/actions/actions';
 import { Log } from '@/lib/logs';
+import { AuthContext } from '@/providers/Auth/Auth.provider';
 import { CartContext } from '@/providers/Cart/Cart.provider';
+import { useRouter } from 'next/navigation';
 import { FC, useContext } from 'react';
 import { FaCartShopping } from 'react-icons/fa6';
 import { GoPlus } from 'react-icons/go';
 import { LuMinus } from 'react-icons/lu';
+import { RiUser6Fill } from 'react-icons/ri';
 
 export const CartButton = () => {
   const cartState = useContext(CartContext);
@@ -82,5 +86,36 @@ export const AddToCartButton: FC<AddToCartButtonProps> = (product) => {
         </div>
       )}
     </>
+  );
+};
+
+export const UserButton = () => {
+  const authCtx = useContext(AuthContext);
+  const router = useRouter();
+  return (
+    <button
+      type='button'
+      className='outline-none transition-all rounded-full'
+      onClick={() => {
+        authCtx.isLoggedIn
+          ? router.push('/profile')
+          : authCtx.setShowAuthForm(true);
+      }}>
+      <RiUser6Fill className='text-3xl' />
+    </button>
+  );
+};
+
+export const LogoutButton = () => {
+  const authCtx = useContext(AuthContext);
+
+  return (
+    <button
+      onClick={() => {
+        logOutAction();
+        authCtx.logOut();
+      }}>
+      Logout
+    </button>
   );
 };

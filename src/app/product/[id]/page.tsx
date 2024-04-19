@@ -6,12 +6,14 @@ import ProductDetailImages from '@/components/ProductDetailImages';
 import { GenerateStars } from '@/lib/utils/client.utils';
 import ProductDescription from './components/ProductDescription.component';
 import Ingredients from './components/Ingredients.component';
-import NewReviewForm from './components/NewReviewForm.component';
 import { Metadata } from 'next';
 import { Log } from '@/lib/logs';
+import UserReview from './components/UserReviews.component';
+import { getSession } from '@/lib/actions/actions';
 
 interface Props {
   params: { id: string };
+  searchParams: { size: string };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -54,7 +56,9 @@ const sizes = [
   },
 ];
 
-const ProductDetailsPage = async ({ params }: Props) => {
+const ProductDetailsPage = async ({ params, searchParams }: Props) => {
+  const session = await getSession();
+
   let errorMessage = 'Product Not Found';
   let product: ProductDetail | null = null;
   try {
@@ -90,23 +94,31 @@ const ProductDetailsPage = async ({ params }: Props) => {
           </div>
 
           {/* sizes */}
-          <div className='flex flex-col gap-3'>
-            <p>
-              <strong>Sizes:</strong>
-            </p>
-            <section className='flex items-center gap-2 flex-wrap'>
-              {sizes.map((size) => (
-                <div key={size.name} className='w-max'>
-                  <input type='radio' name='sizes' id={size.name} hidden />
-                  <label
-                    htmlFor={size.name}
-                    className='px-4 py-1 inline-block rounded bg-off-white-dark text-charcoal-grey text-sm font-medium transition-all select-none cursor-pointer'>
-                    {size.name}
-                  </label>
-                </div>
-              ))}
-            </section>
-          </div>
+          {product?.sizes && product.sizes.length > 0 && (
+            <div className='flex flex-col gap-3'>
+              <p>
+                <strong>Sizes:</strong>
+              </p>
+              <section className='flex items-center gap-2 flex-wrap'>
+                {product?.sizes.map((size) => (
+                  <div key={size._id} className='w-max'>
+                    <input
+                      type='radio'
+                      name='sizes'
+                      id={size._id}
+                      hidden
+                      defaultChecked={size.size === searchParams?.size}
+                    />
+                    <label
+                      htmlFor={size._id}
+                      className='px-4 py-1 inline-block rounded bg-off-white-dark text-charcoal-grey text-sm font-medium transition-all select-none cursor-pointer'>
+                      {size.size}
+                    </label>
+                  </div>
+                ))}
+              </section>
+            </div>
+          )}
 
           <p className='font-semibold text-2xl'>₹ {product.price}</p>
         </section>
@@ -116,46 +128,12 @@ const ProductDetailsPage = async ({ params }: Props) => {
 
       <Ingredients ingredients={product.ingredients} />
 
-      {/* User Reviews */}
-      <section className=''>
-        <h2 className='text-4xl max-xs:text-3xl text-center font-medium items-center'>
-          User Reviews
-        </h2>
-
-        <div className='mt-10 flex gap-10 max-md:flex-col-reverse relative'>
-          {/* New Review */}
-          <div className='flex flex-col gap-2'>
-            <h3 className='text-3xl max-xs:text-2xl'>Overall Rating</h3>
-            <div className='flex items-center gap-2 text-3xl text-charcoal-grey mb-2'>
-              {GenerateStars(product.rating)}
-            </div>
-
-            <NewReviewForm />
-          </div>
-
-          <ul className='flex flex-col gap-4 flex-1'>
-            {product.reviews.length === 0 && (
-              <li className='text-center text-2xl font-medium mt-16'>
-                No Reviews Found!!
-              </li>
-            )}
-            {product.reviews.map((review) => (
-              <li
-                className='bg-off-white flex flex-col p-3 gap-2 text-charcoal-grey'
-                key={review._id}>
-                <h4 className='text-xl font-medium'>{review.username}</h4>
-                <div className='flex gap-3 items-center'>
-                  <div className='flex items-center gap-1'>
-                    {GenerateStars(review.rating)}
-                  </div>
-                  <p className='text-sm'>{review.date}</p>
-                </div>
-                <p>{review.review}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <UserReview
+        rating={product.rating}
+        reviews={product.reviews}
+        userId={session?.id || ''}
+        productId={product._id}
+      />
     </div>
   );
 };

@@ -1,11 +1,7 @@
 export type ProductDetail = {
   name: string;
   price: number;
-  sizes: {
-    price: number;
-    size: string;
-    _id: string;
-  }[];
+  sizes: Size[];
   rating: number;
   reviews: Review[];
   description: string;
@@ -13,8 +9,14 @@ export type ProductDetail = {
   images: string[];
   ingredients: Ingredient[];
   units: number;
+  _id: string;
 };
 
+export type Size = {
+  price: number;
+  size: string;
+  _id: string;
+};
 export type Ingredient = { name: string; description: string; _id: string };
 export type Review = {
   userId: string;
