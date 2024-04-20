@@ -37,4 +37,13 @@
   .hide-show {
     transition: height 200ms ease-in-out;
   }
+
+  .focus-grd {
+    background: linear-gradient(90deg, #fff 10%, rgba(#36454f, 0.2));
+    @apply border-r-charcoal-grey;
+  }
+
+  .more-links:hover > ul {
+    display: flex;
+  }
 }

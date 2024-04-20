@@ -43,7 +43,19 @@ const UserReviews = ({ rating, reviews, userId, productId }: Props) => {
 
     const res = await newReviewAction(payload);
 
+    if (!res.ok) return;
+
     setCanAddReview(false);
+    // setProductReviews((lst) => {
+    //   const reviews = [...lst];
+
+    //   reviews.unshift({
+    //     ...review,
+    //     username: 'abcd',
+    //     userId,
+    //   });
+    //   return reviews;
+    // });
   };
 
   const reviewJSX = productReviews.map((review) => {

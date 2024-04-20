@@ -2,7 +2,6 @@
 import { cookies } from 'next/headers';
 import { Log } from '../logs';
 import { ReviewPayload, UserSession } from '../types/global.types';
-import { redirect } from 'next/navigation';
 
 type ActionResponse<Response> = {
   status: 'success' | 'fail' | 'error';
@@ -39,12 +38,12 @@ export const getSession: () => Promise<UserSession | null> = async () => {
 
 export const logOutAction = async () => {
   cookies().delete('session');
-
-  return redirect('/');
 };
 
 // Action to add a review
-export const newReviewAction = async (review: ReviewPayload) => {
+export const newReviewAction: (
+  review: ReviewPayload
+) => Promise<ActionResponse<undefined>> = async (review) => {
   try {
     const session = cookies().get('session')?.value;
 
@@ -66,8 +65,11 @@ export const newReviewAction = async (review: ReviewPayload) => {
     const data = await res.json();
 
     return data;
-  } catch (err) {
-    Log.error(err);
+  } catch (err: any) {
+    return {
+      ok: false,
+      message: err.message,
+    };
   }
 };
 

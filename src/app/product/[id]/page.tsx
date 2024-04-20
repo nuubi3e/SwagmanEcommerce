@@ -37,25 +37,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const sizes = [
-  {
-    name: '50ml',
-    id: 1,
-  },
-  {
-    name: '100ml',
-    id: 2,
-  },
-  {
-    name: '150ml',
-    id: 3,
-  },
-  {
-    name: '200ml',
-    id: 4,
-  },
-];
-
 const ProductDetailsPage = async ({ params, searchParams }: Props) => {
   const session = await getSession();
 

@@ -42,9 +42,16 @@ const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
       <h1 className='text-center uppercase font-medium text-3xl'>
         {searchParams?.category || 'all products'}
       </h1>
-      <div className='ml-auto flex items-center gap-3'>
+      <div className='ml-auto flex items-center gap-3 flex-wrap'>
         <p>Sort By:</p>{' '}
-        <select id='' className='w-max border py-2 px-4 outline-none'></select>
+        <select id='' className='w-max border py-2 px-4 outline-none'>
+          <option value=''>Recommended</option>
+          <option value=''>Latest</option>
+          <option value=''>Price Low to High</option>
+          <option value=''>Price High to Low</option>
+          <option value=''>Rating Low to High</option>
+          <option value=''>Rating High to Low</option>
+        </select>
       </div>
       <ul className='grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5 max-[550px]:gap-3 text-charcoal-grey'>
         {products.map((prd) => (

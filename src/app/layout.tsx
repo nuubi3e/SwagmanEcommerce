@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Raleway } from 'next/font/google';
 import '../sass/index.scss';
-import Cart from '@/components/Cart';
+import Cart from '@/components/Cart/CartModal.component';
 import { Footer } from '@/components/Footer';
-import Header from '@/components/Header';
+import Header from '@/components/Header/Header.component';
 import dynamic from 'next/dynamic';
 import { AuthProvider } from '@/providers/Auth/Auth.provider';
 import CartProvider from '@/providers/Cart/Cart.provider';

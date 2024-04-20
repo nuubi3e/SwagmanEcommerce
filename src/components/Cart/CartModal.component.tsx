@@ -99,10 +99,10 @@ const CartModal = () => {
 
   useEffect(() => {
     // stop body scroll when cart opens
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflowY = 'hidden';
     return () => {
       // stops body scroll when cart closes
-      document.body.style.overflow = 'scroll';
+      document.body.style.overflowY = 'scroll';
     };
   }, []);
 

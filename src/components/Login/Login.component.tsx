@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client';
 import { Log } from '@/lib/logs';
 import { AuthContext } from '@/providers/Auth/Auth.provider';
@@ -13,6 +14,15 @@ interface LoginPayload {
   email: string;
 }
 
+function formatTime(seconds: number) {
+  var min = Math.floor(seconds / 60);
+  var sec = seconds % 60;
+  return min + ':' + (sec < 10 ? '0' : '') + sec;
+}
+
+const RESEND_OTP_TIME = 90; // in sec
+let OTP_TIMER: NodeJS.Timeout;
+
 const LoginModal = () => {
   const {
     register,
@@ -20,6 +30,10 @@ const LoginModal = () => {
     handleSubmit,
     getValues,
   } = useForm<LoginPayload>();
+  const [resendOTP, setResendOTP] = useState<{
+    time: number;
+    canSend: boolean;
+  }>({ canSend: false, time: RESEND_OTP_TIME });
   const [logging, setLogging] = useState(false);
   const [OTP, setOTP] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -29,6 +43,7 @@ const LoginModal = () => {
 
   const loginHandler = async (userInp: LoginPayload) => {
     setLogging(true);
+    setErrorMsg('');
     try {
       const res = await loginAction(userInp.email);
 
@@ -37,8 +52,20 @@ const LoginModal = () => {
       Log.log(res.data?.key);
       key.current = res?.data?.key || '';
       setMode('verify-otp');
-    } catch (err) {
+
+      OTP_TIMER = setInterval(() => {
+        setResendOTP((lst) => {
+          const resend = { ...lst };
+          if (lst.time >= 1) return { ...resend, time: resend.time - 1 };
+          else {
+            clearInterval(OTP_TIMER);
+            return { canSend: true, time: RESEND_OTP_TIME };
+          }
+        });
+      }, 1000);
+    } catch (err: any) {
       console.error(err);
+      setErrorMsg(err.message);
     } finally {
       setLogging(false);
     }
@@ -46,6 +73,7 @@ const LoginModal = () => {
 
   const verifyOTPHandler = async (OTP: number) => {
     setLogging(true);
+    setErrorMsg('');
     try {
       const res = await verifyOtpAction({ otp: OTP, key: key.current });
 
@@ -53,8 +81,9 @@ const LoginModal = () => {
 
       authCtx.logIn();
       authCtx.setShowAuthForm(false);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setErrorMsg(err.message);
     } finally {
       setLogging(false);
     }
@@ -94,11 +123,24 @@ const LoginModal = () => {
         <SwagmanLogo className='h-24' />
 
         <AnimatePresence mode='wait'>
+          {errorMsg.trim().length > 0 && (
+            <m.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className='text-center text-red-500 font-semibold'>
+              {errorMsg}
+            </m.p>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence mode='wait'>
           {mode === 'verify-otp' && (
             <m.div
-              initial={{ x: '100%' }}
-              animate={{ x: '0%' }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              key={'verify-otp'}
               transition={{ ease: 'easeInOut' }}>
               <h3 className='text-xl font-medium text-center mb-3'>
                 OTP sent to {getValues('email')}
@@ -117,6 +159,7 @@ const LoginModal = () => {
                   value={OTP}
                   disabled={logging}
                   onChange={(e) => {
+                    setErrorMsg('');
                     const value = e.target.value.trim();
 
                     if (isNaN(+value)) return;
@@ -125,6 +168,7 @@ const LoginModal = () => {
                   }}
                   className='border border-charcoal-grey border-opacity-50 transition-all text-charcoal-grey focus:border-opacity-80 py-3 px-4 text-2xl outline-none w-full text-center'
                 />
+
                 <button
                   type='submit'
                   disabled={logging}
@@ -136,17 +180,39 @@ const LoginModal = () => {
                   )}
                 </button>
               </form>
+              <p className='mt-7 font-medium'>
+                Didn't get the OTP,{' '}
+                <button
+                  disabled={!resendOTP.canSend}
+                  onClick={() => {
+                    console.log('I AM HERE');
+                    OTP_TIMER = setInterval(() => {
+                      setResendOTP((lst) => {
+                        const resend = { ...lst };
+                        if (lst.time >= 1)
+                          return { canSend: false, time: resend.time - 1 };
+                        else {
+                          clearInterval(OTP_TIMER);
+                          return { canSend: true, time: RESEND_OTP_TIME };
+                        }
+                      });
+                    }, 1000);
+                  }}
+                  className='disabled:text-slate-500 font-semibold disabled:cursor-not-allowed'>
+                  Resend{' '}
+                  {!resendOTP.canSend && <> in {formatTime(resendOTP.time)}</>}
+                </button>
+              </p>
             </m.div>
           )}
-        </AnimatePresence>
 
-        <AnimatePresence mode='wait'>
           {mode === 'req-otp' && (
             <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ x: '-100%' }}
+              exit={{ opacity: 0 }}
               transition={{ ease: 'easeInOut' }}
+              key={'req-otp'}
               className='flex flex-col gap-5'>
               <h2 className='text-2xl font-medium uppercase text-center'>
                 Login / Signup

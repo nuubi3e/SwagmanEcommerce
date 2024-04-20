@@ -19,6 +19,8 @@ export interface ReviewPayload {
 export interface UserSession {
   id: string;
   username: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  mobileNo: number;
   email: string;
 }
