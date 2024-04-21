@@ -1,26 +1,23 @@
-import React, { Fragment, Suspense } from 'react';
-import NavLink from './NavLink.component';
-import { connectToAPI } from '@/lib/utils/globals.utils';
-import { Log } from '@/lib/logs';
-import { Category } from '@/lib/types/client.types';
-import { FaAngleDown } from 'react-icons/fa6';
+import React, { Fragment, Suspense } from 'react'
+import NavLink from './NavLink.component'
+import { connectToAPI } from '@/lib/utils/globals.utils'
+import { Category } from '@/lib/types/client.types'
+import { FaAngleDown } from 'react-icons/fa6'
 
-const LIMIT = 6;
+const LIMIT = 6
 
 const NavBar = async () => {
-  let categories: Category[] = [];
-  let catLength = 0;
-  let categoryJSX: JSX.Element[] = [];
+  let categories: Category[] = []
+  let catLength = 0
+  let categoryJSX: JSX.Element[] = []
 
   try {
-    const data = await connectToAPI({ endpoint: 'categories', noCache: true });
+    const data = await connectToAPI({ endpoint: 'categories' })
 
-    console.clear();
-    Log.log('IN CAT', data);
-    categories = data?.data?.categories || [];
-    catLength = data?.data?.length || 0;
+    categories = data?.data?.categories || []
+    catLength = data?.data?.length || 0
   } catch (err) {
-    categories = [];
+    categories = []
   }
 
   if (catLength <= 5)
@@ -34,7 +31,7 @@ const NavBar = async () => {
           </Suspense>
         </li>
       </Fragment>
-    ));
+    ))
   // only showing 4 categories if categories is more than 5 rest will be hidden in more option
   else
     categoryJSX = categories.slice(0, LIMIT - 1).map((cat) => (
@@ -47,7 +44,7 @@ const NavBar = async () => {
           </Suspense>
         </li>
       </Fragment>
-    ));
+    ))
 
   return (
     <nav className='bg-off-white py-4 hidden md:flex justify-center'>
@@ -76,7 +73,7 @@ const NavBar = async () => {
         )}
       </ul>
     </nav>
-  );
-};
+  )
+}
 
-export default NavBar;
+export default NavBar

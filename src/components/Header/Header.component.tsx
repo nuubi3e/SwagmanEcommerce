@@ -1,9 +1,9 @@
-import React from 'react';
-import { SwagmanLogo } from '../icons/Logos';
-import Link from 'next/link';
-import SearchBar from '../SearchBar/SearchBar.component';
-import { CartButton, SmallScreenMenuBar, UserButton } from '../Buttons';
-import NavBar from '../NavBar/NavBar.component';
+import React from 'react'
+import { SwagmanLogo } from '../icons/Logos'
+import Link from 'next/link'
+import SearchBar from '../SearchBar/SearchBar.component'
+import { CartButton, SmallScreenMenuBar, UserButton } from '../Buttons/Buttons'
+import NavBar from '../NavBar/NavBar.component'
 
 const Header = () => {
   return (
@@ -29,7 +29,7 @@ const Header = () => {
       </div>
       <NavBar />
     </header>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

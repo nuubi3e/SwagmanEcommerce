@@ -1,17 +1,15 @@
-'use client';
-import React from 'react';
-import { AddToCartButton } from '../Buttons';
-import { Log } from '@/lib/logs';
-import { ProductBrief } from '@/lib/types/client.types';
-import Image from 'next/image';
-import Link from 'next/link';
-import { GenerateStars } from '@/lib/utils/client.utils';
+import React from 'react'
+import { Log } from '@/lib/logs'
+import { ProductBrief } from '@/lib/types/client.types'
+import Image from 'next/image'
+import Link from 'next/link'
+import { GenerateStars } from '@/lib/utils/client.utils'
 
-interface ProductBoxProps extends ProductBrief {}
+interface ProductBoxProps extends ProductBrief {
+  rating: number
+}
 
 const ProductBox = (prd: ProductBoxProps) => {
-  Log.log(prd._id);
-
   return (
     <li
       className='border border-off-white-dark flex flex-col items-center shadow select-none'
@@ -39,16 +37,15 @@ const ProductBox = (prd: ProductBoxProps) => {
         <p className=''>({prd.rating}) Rating</p>
         <p className='mb-4 font-semibold text-xl'>₹ {prd.price}</p>
         <div className='self-stretch mt-auto'>
-          <AddToCartButton
-            _id={prd._id}
-            name={prd.name}
-            price={prd.price}
-            rating={prd.rating}
-          />
+          <Link
+            href={`/product/${prd.name}`}
+            className='bg-charcoal-grey w-full py-3 px-6 uppercase font-medium text-off-white inline-block'>
+            View Options
+          </Link>
         </div>
       </div>
     </li>
-  );
-};
+  )
+}
 
-export default ProductBox;
+export default ProductBox

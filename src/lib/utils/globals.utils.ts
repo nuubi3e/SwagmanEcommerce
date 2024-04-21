@@ -1,46 +1,44 @@
-import { Log } from '../logs';
+import { Log } from '../logs'
 
 export const capitalize = (str: string) =>
   str
     .trim()
     .split(' ')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' '); // function to capitalize string in JS
+    .join(' ') // function to capitalize string in JS
 
 export const connectToAPI = async ({
   endpoint,
   noCache,
 }: {
-  endpoint: string;
-  noCache?: boolean;
+  endpoint: string
+  noCache?: boolean
 }) => {
-  console.clear();
+  console.clear()
   const url = endpoint.includes('http')
     ? endpoint
-    : `${
-        process.env.API_URL || process.env.NEXT_PUBLIC_API_URL
-      }api/${endpoint}`;
+    : `${process.env.API_URL || process.env.NEXT_PUBLIC_API_URL}api/${endpoint}`
 
-  Log.log('URL: ', url);
+  Log.log('URL: ', url)
   Log.log('INFO: ', {
     method: 'GET',
     cache: noCache ? 'no-cache' : 'force-cache',
-  });
+  })
 
   const res = await fetch(url, {
     method: 'GET',
-    cache: noCache ? 'no-cache' : 'default',
-  });
+    cache: noCache ? 'no-store' : 'force-cache',
+  })
 
   if (!res.ok) {
-    const text = JSON.parse(await res.text());
+    const text = JSON.parse(await res.text())
 
-    throw new Error(text.message);
+    throw new Error(text.message)
   }
 
-  const data = await res.json();
+  const data = await res.json()
 
-  Log.log('RES: ', data);
+  Log.log('RES: ', data)
 
-  return data;
-};
+  return data
+}
