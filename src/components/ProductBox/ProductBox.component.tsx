@@ -1,15 +1,12 @@
-import React from 'react'
-import { Log } from '@/lib/logs'
-import { ProductBrief } from '@/lib/types/client.types'
-import Image from 'next/image'
-import Link from 'next/link'
-import { GenerateStars } from '@/lib/utils/client.utils'
+import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { GenerateStars } from '@/lib/utils/client.utils';
+import { ProductBriefInfo } from '@/lib/types/client.types';
 
-interface ProductBoxProps extends ProductBrief {
-  rating: number
-}
+interface Props extends ProductBriefInfo {}
 
-const ProductBox = (prd: ProductBoxProps) => {
+const ProductBox = (prd: Props) => {
   return (
     <li
       className='border border-off-white-dark flex flex-col items-center shadow select-none'
@@ -45,7 +42,7 @@ const ProductBox = (prd: ProductBoxProps) => {
         </div>
       </div>
     </li>
-  )
-}
+  );
+};
 
-export default ProductBox
+export default ProductBox;

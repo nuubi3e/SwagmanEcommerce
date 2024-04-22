@@ -1,47 +1,46 @@
-import { Log } from '@/lib/logs'
-import { ProductOrderInfo } from '@/lib/types/global.types'
-import { Metadata } from 'next'
-import { cookies } from 'next/headers'
-import CourierGif from '@/assets/gifs/courier.gif'
-import React from 'react'
-import Image from 'next/image'
+import { Log } from '@/lib/logs';
+import { ProductOrderInfo } from '@/lib/types/global.types';
+import { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import CourierGif from '@/assets/gifs/courier.gif';
+import React from 'react';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
   title: 'Swagman | Orders',
   description: '',
-}
+};
 
 interface OrderDetails {
-  _id: string
-  products: ProductOrderInfo[]
-  totalAmount: number
+  _id: string;
+  products: ProductOrderInfo[];
+  totalAmount: number;
 }
 
 const UserOrderPage = async () => {
-  const sessionCookie = cookies().get('session').value
-  let orders: OrderDetails[] = []
-  let orderCount = 0
+  const sessionCookie = cookies().get('session')?.value;
+  let orders: OrderDetails[] = [];
+  let orderCount = 0;
   try {
-    Log.log('I AM HERE')
     const res = await fetch(`${process.env.API_URL}api/orders`, {
       method: 'GET',
       headers: {
-        Authorization: sessionCookie,
+        Authorization: sessionCookie || '',
       },
       cache: 'no-store',
-    })
+    });
 
     if (!res.ok) {
-      const text = JSON.parse(await res.text())
+      const text = JSON.parse(await res.text());
 
-      throw new Error(text.message)
+      throw new Error(text.message);
     }
 
-    const data = await res.json()
+    const data = await res.json();
 
-    Log.log(data)
-    orders = data?.data?.items || []
-    orderCount = data?.data?.length || 0
+    Log.log(data);
+    orders = data?.data?.items || [];
+    orderCount = data?.data?.length || 0;
   } catch (err) {}
 
   return (
@@ -75,7 +74,7 @@ const UserOrderPage = async () => {
         ))}
       </ul>
     </div>
-  )
-}
+  );
+};
 
-export default UserOrderPage
+export default UserOrderPage;

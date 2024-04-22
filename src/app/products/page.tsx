@@ -1,6 +1,5 @@
 import ProductBox from '@/components/ProductBox/ProductBox.component';
-import { Log } from '@/lib/logs';
-import { ProductBrief } from '@/lib/types/client.types';
+import { ProductBriefInfo } from '@/lib/types/client.types';
 import { capitalize, connectToAPI } from '@/lib/utils/globals.utils';
 import { Metadata } from 'next';
 import React from 'react';
@@ -23,7 +22,7 @@ export async function generateMetadata({ searchParams }: ProductsPageProps) {
 }
 
 const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
-  let products: ProductBrief[] = [];
+  let products: ProductBriefInfo[] = [];
 
   try {
     const data = await connectToAPI({

@@ -1,8 +1,8 @@
-import { getSession } from '@/lib/actions/actions'
-import { redirect } from 'next/navigation'
-import React, { ReactNode } from 'react'
-import ProfileLink from './Link'
-import { LogoutButton } from '@/components/Buttons/Buttons'
+import { getSession } from '@/lib/actions/actions';
+import { redirect } from 'next/navigation';
+import React, { ReactNode } from 'react';
+import ProfileLink from './Link';
+import { LogoutButton } from '@/components/Buttons/Buttons';
 
 const profileLinks = [
   {
@@ -11,14 +11,14 @@ const profileLinks = [
   },
   {
     href: 'profile',
-    name: 'Acoount Details',
+    name: 'Account Details',
   },
-]
+];
 
 const ProfileLayout = async ({ children }: { children: ReactNode }) => {
-  const session = await getSession()
+  const session = await getSession();
 
-  if (!session) return redirect('/')
+  if (!session) return redirect('/');
   return (
     <section className='flex gap-5 max-md:flex-col'>
       <ul className='flex flex-col w-[313px] select-none max-md:w-full'>
@@ -31,7 +31,7 @@ const ProfileLayout = async ({ children }: { children: ReactNode }) => {
       </ul>
       <div className='flex-1'>{children}</div>
     </section>
-  )
-}
+  );
+};
 
-export default ProfileLayout
+export default ProfileLayout;
