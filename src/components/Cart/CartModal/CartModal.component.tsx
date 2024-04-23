@@ -1,25 +1,26 @@
-'use client'
-import { Log } from '@/lib/logs'
-import { AuthContext } from '@/providers/Auth/Auth.provider'
-import { CartContext } from '@/providers/Cart/Cart.provider'
-import { AnimatePresence, motion as m } from 'framer-motion'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import React, { useContext, useEffect } from 'react'
-import { FaCartShopping } from 'react-icons/fa6'
-import { GoPlus } from 'react-icons/go'
-import { IoClose } from 'react-icons/io5'
-import { LuMinus } from 'react-icons/lu'
+'use client';
+import { Log } from '@/lib/logs';
+import { AuthContext } from '@/providers/Auth/Auth.provider';
+import { CartContext } from '@/providers/Cart/Cart.provider';
+import { AnimatePresence, motion as m } from 'framer-motion';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import React, { useContext, useEffect } from 'react';
+import { FaCartShopping } from 'react-icons/fa6';
+import { GoPlus } from 'react-icons/go';
+import { IoClose } from 'react-icons/io5';
+import { LuLoader, LuLoader2, LuMinus } from 'react-icons/lu';
 
 const EmptyCartBox = () => (
   <div className='flex flex-col items-center gap-5 mt-28 text-charcoal-grey'>
     <FaCartShopping className='text-5xl' />
     <p className='text-2xl font-extrabold'>Your Cart is Empty</p>
   </div>
-)
+);
 
 const CartItems = () => {
-  const cartState = useContext(CartContext)
+  const cartState = useContext(CartContext);
 
   return (
     <ul className='flex flex-col'>
@@ -30,8 +31,11 @@ const CartItems = () => {
           <figure className='h-16 aspect-square border border-charcoal-grey border-opacity-15 relative'>
             <button
               type='button'
+              disabled={
+                cartState.adding || cartState.removing || cartState.deleting
+              }
               onClick={() => cartState.deleteItemFromCart(prd._id)}
-              className='outline-none p-1 bg-off-white rounded-full absolute top-0 right-0 translate-y-[-50%] translate-x-[50%] text-charcoal-grey text-opacity-80 transition-all hover:text-opacity-100'>
+              className='outline-none p-1 bg-off-white rounded-full absolute top-0 right-0 translate-y-[-50%] translate-x-[50%] text-charcoal-grey text-opacity-80 transition-all hover:text-opacity-100 disabled:cursor-not-allowed'>
               <IoClose />
             </button>
             <Image
@@ -49,32 +53,44 @@ const CartItems = () => {
             <div className='w-full flex items-center border border-charcoal-grey border-opacity-15 rounded-full overflow-hidden'>
               <button
                 type='button'
+                disabled={
+                  cartState.adding || cartState.removing || cartState.deleting
+                }
                 onClick={() => cartState.removeFromCart(prd._id)}
-                className='outline-none h-7 aspect-square flex items-center justify-center transition-all hover:bg-off-white'>
-                <LuMinus className='text-sm' />
+                className='outline-none h-7 aspect-square flex items-center justify-center transition-all hover:bg-off-white disabled:cursor-not-allowed'>
+                {cartState.removing ? (
+                  <LuLoader2 className='text-sm animate-spin' />
+                ) : (
+                  <LuMinus className='text-sm' />
+                )}
               </button>
               <p className='flex-1 flex items-center justify-center text font-medium px-3'>
                 {prd.quantity}
               </p>
               <button
                 type='button'
+                disabled={
+                  cartState.adding || cartState.removing || cartState.deleting
+                }
                 onClick={() => cartState.addToCart(prd)}
-                className='outline-none h-7 aspect-square flex items-center justify-center transition-all text-charcoal-grey hover:bg-off-white'>
-                <GoPlus className='text-lg' />
+                className='outline-none h-7 aspect-square flex items-center justify-center transition-all text-charcoal-grey hover:bg-off-white disabled:cursor-not-allowed'>
+                {cartState.adding ? (
+                  <LuLoader2 className='text-sm animate-spin' />
+                ) : (
+                  <GoPlus className='text-lg' />
+                )}
               </button>
             </div>
           </div>
         </li>
       ))}
     </ul>
-  )
-}
+  );
+};
 
 const CartSummary = () => {
-  const cartState = useContext(CartContext)
-  const authCtx = useContext(AuthContext)
-  const router = useRouter()
-
+  const cartState = useContext(CartContext);
+  const authCtx = useContext(AuthContext);
   return (
     <footer className='flex flex-col gap-3'>
       <p className='border-b flex justify-between items-end pb-1 text-sm'>
@@ -83,39 +99,45 @@ const CartSummary = () => {
       </p>
       <p className='border-b flex justify-between items-end pb-1 text-sm'>
         <strong>Shipping</strong>
-        <p className=''>Calculated on Next Step</p>
+        <span className=''>Calculated on Next Step</span>
       </p>
       <p className='border-b flex justify-between items-end pb-1 text-sm'>
         <strong>Total</strong>
         <strong className='text-xl'>₹ {cartState.totalPrice}</strong>
       </p>
 
-      <button
-        type='button'
-        onClick={() => {
-          if (authCtx.isLoggedIn) {
-            router.push('/checkout')
-            cartState.hideCart()
-          } else authCtx.setShowAuthForm(true)
-        }}
-        className='bg-charcoal-grey py-4 text-off-white font-medium mt-6'>
-        Proceed to Checkout
-      </button>
+      {authCtx.isLoggedIn ? (
+        <Link
+          href={'/checkout'}
+          onClick={() => cartState.hideCart()}
+          className='bg-charcoal-grey py-4 text-off-white font-medium mt-6 outline-none text-center'>
+          Proceed to Checkout
+        </Link>
+      ) : (
+        <button
+          type='button'
+          onClick={() => {
+            authCtx.setShowAuthForm(true);
+          }}
+          className='bg-charcoal-grey py-4 text-off-white font-medium mt-6 outline-none'>
+          Proceed to Checkout
+        </button>
+      )}
     </footer>
-  )
-}
+  );
+};
 
 const CartModal = () => {
-  const cartState = useContext(CartContext)
+  const cartState = useContext(CartContext);
 
   useEffect(() => {
     // stop body scroll when cart opens
-    document.body.style.overflowY = 'hidden'
+    document.body.style.overflowY = 'hidden';
     return () => {
       // stops body scroll when cart closes
-      document.body.style.overflowY = 'scroll'
-    }
-  }, [])
+      document.body.style.overflowY = 'scroll';
+    };
+  }, []);
 
   return (
     <m.div
@@ -160,17 +182,17 @@ const CartModal = () => {
         )}
       </m.section>
     </m.div>
-  )
-}
+  );
+};
 
 const Cart = () => {
-  const cartState = useContext(CartContext)
-  Log.log(cartState)
+  const cartState = useContext(CartContext);
+  Log.log(cartState);
   return (
     <AnimatePresence mode='wait'>
       {cartState.cartIsVisible && <CartModal />}
     </AnimatePresence>
-  )
-}
+  );
+};
 
-export default Cart
+export default Cart;

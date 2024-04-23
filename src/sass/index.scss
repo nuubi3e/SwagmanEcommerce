@@ -46,4 +46,8 @@
   .more-links:hover > ul {
     display: flex;
   }
+
+  .info:hover > span {
+    @apply inline-block;
+  }
 }

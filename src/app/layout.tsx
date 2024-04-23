@@ -12,6 +12,8 @@ import { getSession } from '@/lib/actions/actions';
 import { cookies } from 'next/headers';
 import { Log } from '@/lib/logs';
 import RootChildrenWrapper from '@/wrappers/RootChildrenWrapper/RootChildren.wrapper';
+import PaymentProvider from '@/providers/Payment/Payment.provider';
+import Payment from '@/components/Payment/Payment/Payment.component';
 const ScrollToTop = dynamic(
   () => import('@/components/ScrollToTop/ScrollToTop.component'),
   {
@@ -72,13 +74,16 @@ export default async function RootLayout({
       <body className='font-primary relative'>
         <ScrollToTop />
         <AuthProvider hasUser={session ? true : false}>
-          <CartProvider existingCart={JSON.stringify(cart)}>
-            <Cart />
-            <Login />
-            <Header />
-            <RootChildrenWrapper>{children}</RootChildrenWrapper>
-            <Footer />
-          </CartProvider>
+          <PaymentProvider>
+            <CartProvider existingCart={JSON.stringify(cart)}>
+              <Cart />
+              <Payment />
+              <Login />
+              <Header />
+              <RootChildrenWrapper>{children}</RootChildrenWrapper>
+              <Footer />
+            </CartProvider>
+          </PaymentProvider>
         </AuthProvider>
       </body>
     </html>

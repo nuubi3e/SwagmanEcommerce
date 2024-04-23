@@ -9,9 +9,8 @@ const calculateOrderAmount = () => {
   return 100;
 };
 
-export const POST = async (req: NextRequest) => {
+export const GET = async () => {
   try {
-    const body = await req.json();
     console.clear();
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);

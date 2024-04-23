@@ -3,9 +3,11 @@ import { cookies } from 'next/headers';
 import { Log } from '../logs';
 import {
   ProductOrderInfo,
+  ProductPayload,
   ReviewPayload,
   UserSession,
 } from '../types/global.types';
+import { revalidatePath } from 'next/cache';
 
 type ActionResponse<Response> = {
   status: 'success' | 'fail' | 'error';
@@ -153,7 +155,7 @@ export const loginAction: (
 export const verifyOtpAction: (obj: {
   otp: number;
   key: string;
-}) => Promise<ActionResponse<undefined>> = async ({ otp, key }) => {
+}) => Promise<ActionResponse<any>> = async ({ otp, key }) => {
   try {
     const res = await fetch(`${process.env.API_URL}api/login`, {
       method: 'PUT',
@@ -190,6 +192,8 @@ export const verifyOtpAction: (obj: {
         priority: 'high',
       });
 
+    revalidatePath('/checkout');
+
     return data;
   } catch (err: any) {
     return {
@@ -201,17 +205,11 @@ export const verifyOtpAction: (obj: {
   }
 };
 
-interface ProductPayload {
-  id: string;
-  size: string;
-  quantity: number;
-}
-
 interface CartProducts {
   products: ProductPayload[];
 }
 
-export const addToCartAction: (
+export const updateCartAction: (
   order: CartProducts
 ) => Promise<ActionResponse<undefined>> = async (order) => {
   try {
@@ -233,12 +231,18 @@ export const addToCartAction: (
 
     const data = await res.json();
 
-    cookies().set('order', data.data.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      priority: 'high',
-    });
+    // if there is no orderid then we removed the order cookie else we add a cookie
+    if (!data?.data?.id) {
+      cookies().delete('order');
+    } else {
+      cookies().set('order', data.data.id, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        priority: 'high',
+      });
+    }
+
     return data;
   } catch (err: any) {
     return {

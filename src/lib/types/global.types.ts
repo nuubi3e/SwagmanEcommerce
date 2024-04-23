@@ -33,3 +33,17 @@ export interface ProductOrderInfo {
   image?: string;
   name: string;
 }
+
+export interface ProductPayload {
+  id: string;
+  size: string;
+  quantity: number;
+}
+
+export interface CartItems {
+  id: string;
+  size: string;
+  price: number;
+  quantity: number;
+  name: string;
+}

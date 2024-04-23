@@ -8,7 +8,12 @@ import { BiX } from 'react-icons/bi';
 import { SwagmanLogo } from '../icons/Logos';
 import { useForm } from 'react-hook-form';
 import { LuLoader } from 'react-icons/lu';
-import { loginAction, verifyOtpAction } from '@/lib/actions/actions';
+import {
+  loginAction,
+  updateCartAction,
+  verifyOtpAction,
+} from '@/lib/actions/actions';
+import { CartContext } from '@/providers/Cart/Cart.provider';
 
 interface LoginPayload {
   email: string;
@@ -42,11 +47,13 @@ const LoginModal = () => {
   const key = useRef(''); // to store key recieve from server
   const [mode, setMode] = useState<'req-otp' | 'verify-otp'>('req-otp');
   const authCtx = useContext(AuthContext);
+  const { products } = useContext(CartContext);
   const otpIP = useRef<HTMLInputElement>(null);
 
   const loginHandler = async (userInp: LoginPayload) => {
     setLogging(true);
     setErrorMsg('');
+
     try {
       const res = await loginAction(userInp.email);
 
@@ -83,12 +90,22 @@ const LoginModal = () => {
 
       if (!res.ok) throw new Error(res.message);
 
+      // If user has some data in cart and there is no existing cart for the user then we send the cart data to server
+      if (products.length > 0 && !res.data?.orderId)
+        await updateCartAction({
+          products: products.map((product) => ({
+            id: product._id,
+            size: product.size,
+            quantity: product.quantity,
+          })),
+        });
+
       // reloading the page in order to get the updated user info like cart, etc...
       location.reload();
+      setLogging(false);
     } catch (err: any) {
       console.error(err);
       setErrorMsg(err.message);
-    } finally {
       setLogging(false);
     }
   };
@@ -110,6 +127,7 @@ const LoginModal = () => {
       onClick={(e) =>
         // hidding modal if  clicked element is not having loginModal id which is pointing to login modal
         !(e.target as HTMLElement).closest('#loginModal') &&
+        mode !== 'verify-otp' &&
         authCtx.setShowAuthForm(false)
       }
       className='fixed top-0 left-0 w-full h-[100dvh] bg-opacity-10 backdrop-blur-[3px] bg-black z-[9999] py-10 max-xs:px-5 overflow-y-auto hide_scrollbar flex'>
